@@ -24,7 +24,7 @@ player="X"
 count=0
 
 while True:    
-        position=int(input("Enter the number(1-9) : "))
+        position=int(input("Enter where you want to place your mark (1-9) : "))
         if position < 1 or position > 9:
             print("Invalid input. Please enter a number between 1 and 9.")
             continue
