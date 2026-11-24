@@ -1,4 +1,10 @@
+import random
+
 board = [["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]]
+
+def reset_board():
+    global board
+    board = [["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]]
 
 def printboard():
     for i in board:
@@ -60,7 +66,17 @@ def minimax(is_maximizing):
                     best_score = min(score, best_score)
         return best_score
 
-def pc_move():
+def random_move():
+    pc = random.randint(1, 9)
+    row = (pc - 1) // 3
+    col = (pc - 1) % 3
+    while board[row][col] == "X" or board[row][col] == "O":
+        pc = random.randint(1, 9)
+        row = (pc - 1) // 3
+        col = (pc - 1) % 3
+    board[row][col] = "O"
+
+def best_move():
     best_score = -100
     move = (0, 0)
     for i in range(3):
@@ -75,13 +91,37 @@ def pc_move():
                     move = (i, j)
     board[move[0]][move[1]] = "O"
 
+def pc_move(difficulty):
+    if difficulty == "1":  # Easy
+        random_move()
+    elif difficulty == "2":  # Medium (50% Smart, 50% Random)
+        if random.choice([True, False]):
+            best_move()
+        else:
+            random_move()
+    else:  # Hard (Impossible)
+        best_move()
+
+def choose_difficulty():
+    while True:
+        choice = input("Select Difficulty (1 - Easy, 2 - Medium, 3 - Hard): ")
+        if choice in ["1", "2", "3"]:
+            return choice
+        print("Invalid choice. Please enter 1, 2, or 3.")
+
 
 print("Welcome to Tic Tac Toe Game")
+difficulty = choose_difficulty()
 printboard()
-print("start with player X")
+print("Start with player X")
 
 while True:
-    position = int(input("Enter where you want to place your mark (1-9) : "))
+    try:
+        position = int(input("Enter where you want to place your mark (1-9) : "))
+    except ValueError:
+        print("Invalid input. Please enter a number between 1 and 9.")
+        continue
+
     if position < 1 or position > 9:
         print("Invalid input. Please enter a number between 1 and 9.")
         continue
@@ -93,19 +133,36 @@ while True:
         print("This position is already filled. Please choose another position.")
         continue
 
-    else:
-        board[row][col] = "X"
-        if wincheck() == "X":
-            printboard()
-            print("You Win!")
-            break
-        elif is_draw():
-            printboard()
-            print("Draw!")
-            break
+    board[row][col] = "X"
 
-        pc_move()
+    if wincheck() == "X":
         printboard()
-        if wincheck() == "O":
-            print("PC Wins!")
-            break
+        print("You Win!")
+        if input("Do you want to play again? (y/n): ").lower() == "y":
+            reset_board()
+            difficulty = choose_difficulty()
+            printboard()
+            continue
+        break
+
+    elif is_draw():
+        printboard()
+        print("Draw!")
+        if input("Do you want to play again? (y/n): ").lower() == "y":
+            reset_board()
+            difficulty = choose_difficulty()
+            printboard()
+            continue
+        break
+
+    pc_move(difficulty)
+    printboard()
+
+    if wincheck() == "O":
+        print("PC Wins!")
+        if input("Do you want to play again? (y/n): ").lower() == "y":
+            reset_board()
+            difficulty = choose_difficulty()
+            printboard()
+            continue
+        break
