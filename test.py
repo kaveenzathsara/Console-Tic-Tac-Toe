@@ -15,7 +15,7 @@ count=0
 
 while True:
         win=False    
-        position=int(input("Enter the number(1-9) : "))
+        position=int(input("Enter where you want to place your mark (1-9) : "))
         row=(position-1)//3
         col=(position-1)%3
 
